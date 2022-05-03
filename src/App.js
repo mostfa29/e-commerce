@@ -5,7 +5,7 @@ import HomePage from './pages/homepage/homepage.component';
 import ShopPage from './pages/shoppage/shoppage.component';
 import Header from './components/header/header.component';
 import SignPage from './pages/signPage/signPage.component';
-import { auths } from './firebase/firebase.uitls';
+import { auths, createUserProfileDocument } from './firebase/firebase.uitls';
 
 
 
@@ -21,10 +21,32 @@ class App extends React.Component {
   
   logOut=null
   componentDidMount() {
-    this.logout=auths.onAuthStateChanged(user => {
-      this.setState({ currentUser: user })
+   
+    this.logout = auths.onAuthStateChanged(async userAuth => {
       
-      console.log(user)
+      if (userAuth) {
+       
+        const userRef = await createUserProfileDocument(userAuth)
+        
+        
+        userRef.onSnapshot(snapShot => {
+          
+          this.setState({
+            currentUser:
+            {
+              id: snapShot.id,
+              ...snapShot.data()
+            }
+          })
+          
+
+          
+
+        } )    
+      }
+      
+      this.setState({ currentUser: userAuth })
+      
     })
   }
 
@@ -36,7 +58,7 @@ class App extends React.Component {
   render() {
     return (
     <div className='app'>
-      <Header/>
+        <Header sign={this.state.currentUser} />
       <Switch>
         <Route exact path="/">
           <HomePage />

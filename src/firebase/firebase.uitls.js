@@ -1,4 +1,6 @@
-import { initializeApp } from "firebase/app";
+import firebase from 'firebase/compat/app';
+import "firebase/compat/firestore"
+// import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 
@@ -12,13 +14,18 @@ const firebaseConfig = {
   measurementId: "G-6XZPY9BQ45"
 }; 
 
-const app = initializeApp(firebaseConfig);
-const auth= getAuth(app)
+const app = firebase.initializeApp(firebaseConfig);
+const auth = getAuth(app)
+const firestore=firebase.firestore()
+
+
+
 
 const provider = new GoogleAuthProvider();
 
 
-export const auths=auth
+export const auths = auth
+
 export const googleAuth = () => {
   signInWithPopup(auth, provider)
     .then((result) => {
@@ -40,8 +47,41 @@ export const googleAuth = () => {
   });
 }
 
+export const createUserProfileDocument = async (userAuth, AdditionnalData) => {
+  if (!userAuth) return 
+
+  //get user document 
+  const userRef = firestore.doc(`users/${userAuth.uid}`)
+
+  //get user doc state
+  const snapshot = await userRef.get()
+  
+  //create user doc if doesn't exist
+  if (!snapshot.exists){
+    const { displayName, email } = userAuth
+    const creationDate=new Date()
+    try {
+      userRef.set({
+        displayName,
+        email,
+        creationDate,
+        ...AdditionnalData
+      })
+     
+
+    }
+    catch (error) {
+      console.log(error.message)
+    }
+  }
+  
+  return userRef
+}  
+  
 
 
 
-// export const firestore = firebase.firestore()
+
+
+
 

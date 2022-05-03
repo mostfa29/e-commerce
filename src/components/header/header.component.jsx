@@ -1,9 +1,10 @@
 import React from 'react'
 import './header.styles.scss'
 import {ReactComponent as Logo} from '../../assets/crown.svg'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { auths } from '../../firebase/firebase.uitls'
 
-function Header() {
+function Header({sign}) {
   return (
       <div className='header'>
           <Link className='header-logo-container' to='/'>
@@ -12,7 +13,16 @@ function Header() {
           <div className='header-options'>
               <Link className='option' to='/shop'>Shop </Link>
               <Link className='option' to='/contact'>Contact </Link>
-              <Link className='option' to="/sign">SignIn </Link>
+
+              
+              {  
+                  sign ? 
+                      <div className='option' onClick={()=> auths.signOut()} >Sign Out </div>
+                   : 
+                      <Link className='option ' to="/sign">Sign In</Link>
+                  
+                     
+              }
           </div>
       </div>
   )
