@@ -34,13 +34,13 @@ export class SignUp extends Component {
             try {
                 const { user } = await createUserWithEmailAndPassword(auths,this.state.email, this.state.password)
                 
-                const userRef = await createUserProfileDocument(user,{displayName},password)
-                console.log(userRef)
+                const userRef = await createUserProfileDocument(user,{displayName})
+                
                 
             }
              
              
-             catch (error) { console.log(error.message) }
+            catch (error) { console.log(error.message);alert(error.message) }
              
             
         }
